@@ -1,9 +1,39 @@
 pipeline {
     agent any
+    environment {
+         PROD_IP = '3.93.200.97'
+    }
+    
     stages {
+        stage ('cleanup'){
+            steps{
+                echo 'cleaning started'
+                cleanWs()
+                echo 'cleaning success'
+            }
+        }
         stage('dtap production') {
             steps {
                 echo "good luck..."
+            }
+        }
+        stage('deploy prod') {
+            steps {
+                sshagent(credentials: ['AwsTestserver']) {
+                    sh "ssh -o StrictHostKeyChecking=no ubuntu@${env.PROD_IP} 'docker pull vincentdaenenpxl/calculator-app && docker image prune'"
+                }
+            }
+        }
+        stage('start prod') {
+            steps {
+                sshagent(credentials: ['AwsTestserver']) {
+                    sh "ssh -o StrictHostKeyChecking=no ubuntu@${env.PROD_IP} 'docker rm -f calculator-prod && docker run -d -p 80:3000 --name calculator-prod vincentdaenenpxl/calculator-app'"
+                }
+            }
+        }
+        stage('test prod') {
+            steps {
+                sh "curl -I ${env.PROD_IP}:80"
             }
         }
     }
