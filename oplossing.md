@@ -3,5 +3,5 @@ opmaak met Markdown.
 
 a) ![rechten](./images/jenkinsDockerRechten.png)
 
-    1. Voeg jenkins toe aan de docker groep
+    1. Voeg jenkins toe aan de docker groep.
     2. Door sudo su - jenkins te doen krijgt de jenkins user permanent sudo rechten zodat hij docker commands zonder sudo kan uitvoeren.
